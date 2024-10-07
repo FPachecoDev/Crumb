@@ -52,12 +52,16 @@
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 <string>Your description</string>
-<key>NSLocationAlwaysUsageDescription</key>
-<string>Your description</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>Need microphone access for uploading audio</string>
+<key>NSCameraUsageDescription</key>
+<string>Need camera access for uploading images</string>
+<key>NSLocationUsageDescription</key>
+<string>Need location access for updating nearby friends</string>
 <key>NSLocationWhenInUseUsageDescription</key>
-<string>Esta aplicação precisa acessar sua localização.</string>
-<key>NSLocationAlwaysUsageDescription</key>
-<string>Esta aplicação precisa acessar sua localização em segundo plano.</string>
+<string>This app will use your location to show features near you.</string>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>Need photo library access for saving and uploading images</string>
 
 </dict>
 </plist>
