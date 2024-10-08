@@ -172,7 +172,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         : (_uploadedBackgroundUrl != null &&
                                 _uploadedBackgroundUrl!.isNotEmpty)
                             ? NetworkImage(_uploadedBackgroundUrl!)
-                            : AssetImage('assets/default_background.jpg')
+                            : NetworkImage(
+                                    'https://img.freepik.com/fotos-gratis/plano-de-fundo-texturizado-de-concreto-grunge-preto_53876-124541.jpg')
                                 as ImageProvider, // Imagem padrão
                     fit: BoxFit.cover,
                   ),
@@ -312,7 +313,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Logout'),
+          title: const Text('Sair'),
           content: const Text('Tem certeza que deseja sair?'),
           actions: [
             TextButton(

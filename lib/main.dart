@@ -7,6 +7,8 @@ import 'package:crumb/features/create/create_controller.dart';
 import 'package:crumb/features/global/global_controller.dart';
 import 'package:crumb/features/home/home_controller.dart';
 import 'package:crumb/features/home/home_page.dart';
+import 'package:crumb/features/onboarding/onboarding_controller.dart';
+import 'package:crumb/features/onboarding/onboarding_page.dart';
 import 'package:crumb/features/profile/profile_controller.dart';
 import 'package:crumb/features/splashscreen/splashscreen_page.dart';
 import 'package:flutter/material.dart';
@@ -47,6 +49,10 @@ void main() async {
                 ProfileController()), // Injeção do HomeController no RegisterControlle
 
         ChangeNotifierProvider(create: (_) => GlobalController()),
+
+        ChangeNotifierProvider(
+            create: (_) =>
+                ProfileController()), // Injeção do HomeController no RegisterControlle
       ],
       child: MyApp(), // Passa o estado de login para o MyApp
     ),
@@ -72,6 +78,8 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginPage(), // Rota para LoginPage
         '/register': (context) => RegisterPage(), // Rota para RegisterPage
         '/app': (context) => App(), // Rota para home do app
+        '/onboarding': (context) =>
+            OnboardingPage(), // Rota para oboarding do app
       },
     );
   }

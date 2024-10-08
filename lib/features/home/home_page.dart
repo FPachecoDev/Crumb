@@ -1,5 +1,6 @@
 import 'package:crumb/features/home/models/crumbs_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'home_controller.dart';
@@ -135,6 +136,11 @@ class _HomePageState extends State<HomePage> {
                         avatarUrl; // Atualiza o avatarUrl
                   }
 
+                  bool isRemembered =
+                      homeController.isCrumbRemembered(crumb.id);
+
+                  int rememberCount = homeController.getRememberCount(crumb.id);
+
                   return Stack(
                     children: [
                       // Imagem de fundo
@@ -145,7 +151,7 @@ class _HomePageState extends State<HomePage> {
                         width: double.infinity,
                       ),
                       Positioned(
-                        bottom: 0,
+                        bottom: 60,
                         child: Padding(
                           padding: const EdgeInsets.all(20),
                           child: Column(
@@ -183,6 +189,50 @@ class _HomePageState extends State<HomePage> {
                                 "${crumb.city}, ${crumb.country}",
                                 style: const TextStyle(color: Colors.grey),
                               ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        child: Container(
+                          color: Colors.black,
+                          width: MediaQuery.of(context).size.width,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 15, bottom: 15, right: 10),
+                                child: InkWell(
+                                  onTap: () {
+                                    homeController.toggleRememberCrumb(
+                                        crumb.id, crumb.userId);
+                                  },
+                                  child: Container(
+                                      child: isRemembered
+                                          ? Image.asset(
+                                              'assets/images/icon/icon_remender_full.png',
+                                              width: 29,
+                                            )
+                                          : Image.asset(
+                                              'assets/images/icon/icon_remender_linha.png',
+                                              width: 29,
+                                            )),
+                                ),
+                              ),
+                              // Implementando as condições de contagem
+                              if (isRemembered && rememberCount > 0) ...[
+                                Text(
+                                  rememberCount == 1
+                                      ? "$rememberCount pessoa reviveu esta memória."
+                                      : "$rememberCount pessoas reviveram esta memória.",
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ] else ...[
+                                const SizedBox
+                                    .shrink(), // Retorna um widget vazio se não houver contagem
+                              ]
                             ],
                           ),
                         ),

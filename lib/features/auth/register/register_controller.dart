@@ -100,7 +100,7 @@ class RegisterController extends ChangeNotifier {
         isLoading = false;
         notifyListeners();
 
-        Navigator.pushReplacementNamed(context, '/app');
+        Navigator.pushReplacementNamed(context, '/onboarding');
       } else {
         throw Exception('Erro ao criar usuário');
       }

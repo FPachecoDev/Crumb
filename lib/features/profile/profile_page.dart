@@ -63,13 +63,16 @@ class _ProfilePageState extends State<ProfilePage>
                   // Modificado para usar Consumer
                   builder: (context, controller, child) {
                     String backgroundUrl = controller.user?.backgroundUrl ??
-                        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-dehMZsvwMh9-VmZzw8QB1FbvlLtl9z58JmdfyjKxsKVnfBW9TALt5muFy7DBcqyRYpI&usqp=CAU'; // URL padrão se não houver
+                        'https://img.freepik.com/fotos-gratis/plano-de-fundo-texturizado-de-concreto-grunge-preto_53876-124541.jpg'; // URL padrão se não houver
                     return Container(
                       height: 200,
                       width: double.infinity,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: NetworkImage(backgroundUrl),
+                          image: backgroundUrl == ''
+                              ? NetworkImage(
+                                  'https://img.freepik.com/fotos-gratis/plano-de-fundo-texturizado-de-concreto-grunge-preto_53876-124541.jpg')
+                              : NetworkImage(backgroundUrl),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -169,42 +172,46 @@ class _ProfilePageState extends State<ProfilePage>
                     builder: (context, controller, child) {
                       if (controller.isLoading || controller.user == null) {
                         return Center(child: CircularProgressIndicator());
+                      } else if (controller.user!.photos.length == 0) {
+                        return Center(
+                          child: Text(
+                              'Este usuario não possui nenhuma publicação.'),
+                        );
                       }
 
                       // Exibindo os crumbs (fotos) do usuário
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: GridView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                            childAspectRatio: 1,
-                          ),
-                          itemCount: controller.user!.photos.length,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                image: DecorationImage(
-                                  image: NetworkImage(
-                                      controller.user!.photos[index]),
-                                  fit: BoxFit.cover,
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                              childAspectRatio: 1,
+                            ),
+                            itemCount: controller.user!.photos.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  image: DecorationImage(
+                                    image: NetworkImage(
+                                        controller.user!.photos[index]),
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
+                              );
+                            }),
                       );
                     },
                   ),
                   Center(
                     child: Text(
                       'Vídeos em breve',
-                      style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                     ),
                   ),
                 ],
