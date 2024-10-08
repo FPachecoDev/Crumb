@@ -33,26 +33,6 @@ class HomeRepository {
     }
   }
 
-  // Função para buscar os detalhes do usuário (nickname e avatar)
-  Future<Map<String, String>> getUserDetails(String userId) async {
-    try {
-      DocumentSnapshot snapshot =
-          await _firestore.collection('users').doc(userId).get();
-
-      if (snapshot.exists) {
-        final data = snapshot.data() as Map<String, dynamic>;
-        return {
-          'nickname': data['nickname'] ?? "Nickname não encontrado",
-          'avatarUrl': data['avatarUrl'] ?? ""
-        };
-      } else {
-        throw Exception("Usuário não encontrado");
-      }
-    } catch (e) {
-      throw Exception("Erro ao buscar detalhes do usuário: $e");
-    }
-  }
-
   // Função para verificar se um crumb foi lembrado (curtido) por um usuário
   Future<bool> isCrumbRememberedByUser(String crumbId, String userId) async {
     try {
