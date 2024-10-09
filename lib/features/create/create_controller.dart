@@ -59,13 +59,12 @@ class CreatePageController extends ChangeNotifier {
       Placemark place = placemarks[0];
 
       // Reduz a qualidade da imagem e força a orientação para "de pé"
-      File compressedFile = await _compressImage(mediaFile);
+      //  File compressedFile = await _compressImage(mediaFile);
 
       // Cria um mapa para os dados do crumb, incluindo a legenda
       Map<String, dynamic> crumbData = {
         'userId': user.uid,
-        'mediaUrl':
-            await _uploadMedia(compressedFile), // Salva o URL do arquivo
+        'mediaUrl': await _uploadMedia(mediaFile), // Salva o URL do arquivo
         'caption': caption, // Adiciona o campo de legenda (caption)
         "geopoint": GeoPoint(position.latitude, position.longitude),
         'street': place.street,
@@ -128,25 +127,25 @@ class CreatePageController extends ChangeNotifier {
     return downloadUrl; // Retorna a URL do arquivo salvo
   }
 
-  Future<File> _compressImage(File mediaFile) async {
-    // Lê a imagem original
-    final img.Image originalImage =
-        img.decodeImage(await mediaFile.readAsBytes())!;
+  //Future<File> _compressImage(File mediaFile) async {
+  // Lê a imagem original
+  //  final img.Image originalImage =
+  //    img.decodeImage(await mediaFile.readAsBytes())!;
 
-    // Gira a imagem para que fique na orientação "de pé"
-    final img.Image orientedImage = img.copyRotate(
-        originalImage, 90); // Gira 90 graus, ajuste conforme necessário
+  // Gira a imagem para que fique na orientação "de pé"
+  //final img.Image orientedImage = img.copyRotate(
+  //   originalImage, 90); // Gira 90 graus, ajuste conforme necessário
 
-    // Reduz a qualidade da imagem (por exemplo, para 50% do tamanho original)
-    final img.Image resizedImage = img.copyResize(orientedImage,
-        width: (orientedImage.width * 0.5).round());
+  // Reduz a qualidade da imagem (por exemplo, para 50% do tamanho original)
+  // final img.Image resizedImage = img.copyResize(orientedImage,
+  //   width: (orientedImage.width * 0.5).round());
 
-    // Salva a imagem comprimida em um arquivo temporário
-    final compressedFile =
-        File(mediaFile.path.replaceFirst(RegExp(r'\.\w+$'), '_compressed.jpg'))
-          ..writeAsBytesSync(img.encodeJpg(resizedImage,
-              quality: 85)); // Ajuste a qualidade conforme necessário
+  // Salva a imagem comprimida em um arquivo temporário
+  //final compressedFile =
+  //  File(mediaFile.path.replaceFirst(RegExp(r'\.\w+$'), '_compressed.jpg'))
+  //  ..writeAsBytesSync(img.encodeJpg(resizedImage,
+  //   quality: 85)); // Ajuste a qualidade conforme necessário
 
-    return compressedFile;
-  }
+  // return compressedFile;
+//  }
 }
