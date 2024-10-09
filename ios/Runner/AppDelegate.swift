@@ -12,7 +12,7 @@ import FirebaseCore
     
   ) -> Bool {
 
-    
+    GMSServices.provideAPIKey("AIzaSyAjUlN3JEYBtNNkqnGglmzH86u_a56Skec")
     FirebaseApp.configure() 
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
