@@ -1,4 +1,5 @@
 import 'package:crumb/features/home/models/crumbs_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
@@ -106,144 +107,153 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Consumer<HomePageController>(
-        builder: (context, homeController, child) {
-          if (homeController.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: Consumer<HomePageController>(
+          builder: (context, homeController, child) {
+            if (homeController.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (homeController.crumbs.isEmpty) {
-            return const Center(
-                child: Text("Nenhum crumb encontrado nas proximidades"));
-          }
+            if (homeController.crumbs.isEmpty) {
+              return const Center(
+                  child: Text("Nenhum crumb encontrado nas proximidades"));
+            }
 
-          return PageView.builder(
-            scrollDirection: Axis.vertical,
-            itemCount: homeController.crumbs.length,
-            itemBuilder: (context, index) {
-              final CrumbModel crumb = homeController.crumbs[index];
-              return FutureBuilder<Map<String, String>>(
-                future: homeController.getUserDetails(crumb.userId),
-                builder: (context, snapshot) {
-                  String nickname = 'Usuário';
-                  String avatarUrl =
-                      'https://someimageurl.com/profile.png'; // URL padrão
+            return PageView.builder(
+              scrollDirection: Axis.vertical,
+              itemCount: homeController.crumbs.length,
+              itemBuilder: (context, index) {
+                final CrumbModel crumb = homeController.crumbs[index];
+                return FutureBuilder<Map<String, String>>(
+                  future: homeController.getUserDetails(crumb.userId),
+                  builder: (context, snapshot) {
+                    String nickname = 'Usuário';
+                    String avatarUrl =
+                        'https://someimageurl.com/profile.png'; // URL padrão
 
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    nickname = snapshot.data?['nickname'] ?? 'Usuário';
-                    avatarUrl = snapshot.data?['avatarUrl'] ??
-                        avatarUrl; // Atualiza o avatarUrl
-                  }
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      nickname = snapshot.data?['nickname'] ?? 'Usuário';
+                      avatarUrl = snapshot.data?['avatarUrl'] ??
+                          avatarUrl; // Atualiza o avatarUrl
+                    }
 
-                  bool isRemembered =
-                      homeController.isCrumbRemembered(crumb.id);
+                    bool isRemembered =
+                        homeController.isCrumbRemembered(crumb.id);
 
-                  int rememberCount = homeController.getRememberCount(crumb.id);
+                    int rememberCount =
+                        homeController.getRememberCount(crumb.id);
 
-                  return Stack(
-                    children: [
-                      // Imagem de fundo
-                      Image.network(
-                        crumb.mediaUrl,
-                        fit: BoxFit.cover,
-                        height: double.infinity,
-                        width: double.infinity,
-                      ),
-                      Positioned(
-                        bottom: 60,
-                        child: Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                        avatarUrl), // Imagem do perfil do usuário
-                                  ),
-                                  Text(
-                                    " $nickname",
+                    return Stack(
+                      children: [
+                        // Imagem de fundo
+                        Image.network(
+                          crumb.mediaUrl,
+                          fit: BoxFit.cover,
+                          height: double.infinity,
+                          width: double.infinity,
+                        ),
+                        Positioned(
+                          bottom: 60,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              left: 20,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          avatarUrl), // Imagem do perfil do usuário
+                                    ),
+                                    Text(
+                                      " $nickname",
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
+                                    const SizedBox(
+                                        width:
+                                            10), // Espaço entre o nickname e o timestamp
+                                    Text(
+                                      _timeAgo(crumb
+                                          .timestamp), // Exibindo o tempo calculado
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 10, bottom: 10),
+                                  child: Text(
+                                    crumb.caption,
                                     style: const TextStyle(color: Colors.white),
                                   ),
-                                  const SizedBox(
-                                      width:
-                                          10), // Espaço entre o nickname e o timestamp
-                                  Text(
-                                    _timeAgo(crumb
-                                        .timestamp), // Exibindo o tempo calculado
-                                    style: const TextStyle(color: Colors.grey),
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 10, bottom: 10),
-                                child: Text(
-                                  crumb.caption,
-                                  style: const TextStyle(color: Colors.white),
                                 ),
-                              ),
-                              Text(
-                                "${crumb.city}, ${crumb.country}",
-                                style: const TextStyle(color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        child: Container(
-                          color: Colors.black,
-                          width: MediaQuery.of(context).size.width,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 15, bottom: 15, right: 10),
-                                child: InkWell(
-                                  onTap: () {
-                                    homeController.toggleRememberCrumb(
-                                        crumb.id, crumb.userId);
-                                  },
-                                  child: Container(
-                                      child: isRemembered
-                                          ? Image.asset(
-                                              'assets/images/icon/icon_remender_full.png',
-                                              width: 29,
-                                            )
-                                          : Image.asset(
-                                              'assets/images/icon/icon_remender_linha.png',
-                                              width: 29,
-                                            )),
-                                ),
-                              ),
-                              // Implementando as condições de contagem
-                              if (isRemembered && rememberCount > 0) ...[
                                 Text(
-                                  rememberCount == 1
-                                      ? "$rememberCount pessoa reviveu esta memória."
-                                      : "$rememberCount pessoas reviveram esta memória.",
+                                  "${crumb.city}, ${crumb.country}",
                                   style: const TextStyle(color: Colors.white),
                                 ),
-                              ] else ...[
-                                const SizedBox
-                                    .shrink(), // Retorna um widget vazio se não houver contagem
-                              ]
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          );
-        },
+                        Positioned(
+                          bottom: 0,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              left: 20,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 15, bottom: 15, right: 10),
+                                  child: InkWell(
+                                    onTap: () {
+                                      homeController.toggleRememberCrumb(
+                                          crumb.id, crumb.userId);
+                                    },
+                                    child: Container(
+                                        child: isRemembered
+                                            ? Image.asset(
+                                                'assets/images/icon/icon_remender_full.png',
+                                                width: 29,
+                                              )
+                                            : Image.asset(
+                                                'assets/images/icon/icon_remender_linha.png',
+                                                width: 29,
+                                              )),
+                                  ),
+                                ),
+                                // Implementando as condições de contagem
+                                if (isRemembered && rememberCount > 0) ...[
+                                  Text(
+                                    rememberCount == 1
+                                        ? "$rememberCount pessoa reviveu esta memória."
+                                        : "$rememberCount pessoas reviveram esta memória.",
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                ] else ...[
+                                  const SizedBox
+                                      .shrink(), // Retorna um widget vazio se não houver contagem
+                                ]
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

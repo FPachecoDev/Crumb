@@ -49,175 +49,179 @@ class _ProfilePageState extends State<ProfilePage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment.center,
-              children: [
-                // Capa de fundo
-                Consumer<ProfileController>(
-                  // Modificado para usar Consumer
-                  builder: (context, controller, child) {
-                    String backgroundUrl = controller.user?.backgroundUrl ??
-                        'https://img.freepik.com/fotos-gratis/plano-de-fundo-texturizado-de-concreto-grunge-preto_53876-124541.jpg'; // URL padrão se não houver
-                    return Container(
-                      height: 200,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: backgroundUrl == ''
-                              ? NetworkImage(
-                                  'https://img.freepik.com/fotos-gratis/plano-de-fundo-texturizado-de-concreto-grunge-preto_53876-124541.jpg')
-                              : NetworkImage(backgroundUrl),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                // Ícone de engrenagem no canto superior direito
-                Positioned(
-                  top: 50,
-                  right: 10,
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.settings,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditProfilePage(),
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  // Capa de fundo
+                  Consumer<ProfileController>(
+                    // Modificado para usar Consumer
+                    builder: (context, controller, child) {
+                      String backgroundUrl = controller.user?.backgroundUrl ??
+                          'https://img.freepik.com/fotos-gratis/plano-de-fundo-texturizado-de-concreto-grunge-preto_53876-124541.jpg'; // URL padrão se não houver
+                      return Container(
+                        height: 200,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: backgroundUrl == ''
+                                ? NetworkImage(
+                                    'https://img.freepik.com/fotos-gratis/plano-de-fundo-texturizado-de-concreto-grunge-preto_53876-124541.jpg')
+                                : NetworkImage(backgroundUrl),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       );
                     },
                   ),
-                ),
-                // Avatar circular sobrepondo a capa e o corpo
-                Consumer<ProfileController>(
-                  builder: (context, controller, child) {
-                    return Positioned(
-                      bottom: -50,
-                      child: CircleAvatar(
-                        radius: 50,
-                        backgroundImage: controller.user != null
-                            ? NetworkImage(controller.user!.avatarUrl)
-                            : null,
-                        child: controller.user == null
-                            ? CircularProgressIndicator()
-                            : null,
+                  // Ícone de engrenagem no canto superior direito
+                  Positioned(
+                    top: 50,
+                    right: 10,
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.settings,
+                        color: Colors.white,
+                        size: 30,
                       ),
-                    );
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 60),
-            // Nome e Bio com dados dinâmicos
-            Consumer<ProfileController>(
-              builder: (context, controller, child) {
-                if (controller.isLoading) {
-                  return CircularProgressIndicator(); // Exibe um loading enquanto os dados estão carregando
-                }
-
-                if (controller.user == null) {
-                  return Text("Erro ao carregar dados do perfil");
-                }
-
-                return Column(
-                  children: [
-                    Text(
-                      controller.user!.name, // Nome dinâmico do usuário
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditProfilePage(),
+                          ),
+                        );
+                      },
                     ),
-                    const SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Text(
-                        controller.user!.bio, // Biografia do usuário
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
-            const SizedBox(height: 20),
-            TabBar(
-              controller: _tabController,
-              labelColor: Colors.black,
-              unselectedLabelColor: Colors.grey,
-              indicatorColor: Colors.black,
-              tabs: const [
-                Tab(text: 'Fotos'),
-                Tab(text: 'Vídeos'),
-              ],
-            ),
-            SizedBox(
-              height: 400,
-              child: TabBarView(
-                controller: _tabController,
-                children: [
+                  ),
+                  // Avatar circular sobrepondo a capa e o corpo
                   Consumer<ProfileController>(
                     builder: (context, controller, child) {
-                      if (controller.isLoading || controller.user == null) {
-                        return Center(child: CircularProgressIndicator());
-                      } else if (controller.user!.photos.length == 0) {
-                        return Center(
-                          child: Text(
-                              'Este usuario não possui nenhuma publicação.'),
-                        );
-                      }
-
-                      // Exibindo os crumbs (fotos) do usuário
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: GridView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 10,
-                              childAspectRatio: 1,
-                            ),
-                            itemCount: controller.user!.photos.length,
-                            itemBuilder: (context, index) {
-                              return Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                        controller.user!.photos[index]),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              );
-                            }),
+                      return Positioned(
+                        bottom: -50,
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundImage: controller.user != null
+                              ? NetworkImage(controller.user!.avatarUrl)
+                              : null,
+                          child: controller.user == null
+                              ? CircularProgressIndicator()
+                              : null,
+                        ),
                       );
                     },
-                  ),
-                  Center(
-                    child: Text(
-                      'Vídeos em breve',
-                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                    ),
                   ),
                 ],
               ),
-            ),
-          ],
+              const SizedBox(height: 60),
+              // Nome e Bio com dados dinâmicos
+              Consumer<ProfileController>(
+                builder: (context, controller, child) {
+                  if (controller.isLoading) {
+                    return CircularProgressIndicator(); // Exibe um loading enquanto os dados estão carregando
+                  }
+
+                  if (controller.user == null) {
+                    return Text("Erro ao carregar dados do perfil");
+                  }
+
+                  return Column(
+                    children: [
+                      Text(
+                        controller.user!.name, // Nome dinâmico do usuário
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: Text(
+                          controller.user!.bio, // Biografia do usuário
+                          textAlign: TextAlign.center,
+                          style:
+                              TextStyle(fontSize: 16, color: Colors.grey[700]),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(height: 20),
+              TabBar(
+                controller: _tabController,
+                labelColor: Colors.black,
+                unselectedLabelColor: Colors.grey,
+                indicatorColor: Colors.black,
+                tabs: const [
+                  Tab(text: 'Fotos'),
+                  Tab(text: 'Vídeos'),
+                ],
+              ),
+              SizedBox(
+                height: 400,
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    Consumer<ProfileController>(
+                      builder: (context, controller, child) {
+                        if (controller.isLoading || controller.user == null) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (controller.user!.photos.length == 0) {
+                          return Center(
+                            child: Text(
+                                'Este usuario não possui nenhuma publicação.'),
+                          );
+                        }
+
+                        // Exibindo os crumbs (fotos) do usuário
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: GridView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 10,
+                                childAspectRatio: 1,
+                              ),
+                              itemCount: controller.user!.photos.length,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    image: DecorationImage(
+                                      image: NetworkImage(
+                                          controller.user!.photos[index]),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                );
+                              }),
+                        );
+                      },
+                    ),
+                    Center(
+                      child: Text(
+                        'Vídeos em breve',
+                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

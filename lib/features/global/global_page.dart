@@ -133,45 +133,48 @@ class _GlobalPageState extends State<GlobalPage> {
   Widget build(BuildContext context) {
     return Consumer<GlobalController>(
       builder: (context, controller, child) {
-        return Scaffold(
-          body: Stack(
-            children: [
-              // Verifica se a localização atual foi obtida
-              _isLoading || controller.isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(),
-                    ) // Exibe um carregador enquanto aguarda a localização ou os crumbs
-                  : GoogleMap(
-                      onMapCreated: _onMapCreated,
-                      initialCameraPosition: CameraPosition(
-                        target: _currentPosition ??
-                            LatLng(37.7749,
-                                -122.4194), // Usa uma posição padrão enquanto aguarda a localização
-                        zoom: _currentZoom,
+        return PopScope(
+          canPop: false,
+          child: Scaffold(
+            body: Stack(
+              children: [
+                // Verifica se a localização atual foi obtida
+                _isLoading || controller.isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      ) // Exibe um carregador enquanto aguarda a localização ou os crumbs
+                    : GoogleMap(
+                        onMapCreated: _onMapCreated,
+                        initialCameraPosition: CameraPosition(
+                          target: _currentPosition ??
+                              LatLng(37.7749,
+                                  -122.4194), // Usa uma posição padrão enquanto aguarda a localização
+                          zoom: _currentZoom,
+                        ),
+                        markers: _markers, // Passa a lista de marcadores
+                        zoomControlsEnabled: false,
+                        myLocationEnabled: true,
+                        myLocationButtonEnabled: true,
                       ),
-                      markers: _markers, // Passa a lista de marcadores
-                      zoomControlsEnabled: false,
-                      myLocationEnabled: true,
-                      myLocationButtonEnabled: true,
-                    ),
-              Positioned(
-                bottom: 50,
-                right: 10,
-                child: Column(
-                  children: [
-                    FloatingActionButton(
-                      onPressed: _zoomIn,
-                      child: const Icon(Icons.zoom_in),
-                    ),
-                    const SizedBox(height: 10),
-                    FloatingActionButton(
-                      onPressed: _zoomOut,
-                      child: const Icon(Icons.zoom_out),
-                    ),
-                  ],
+                Positioned(
+                  bottom: 50,
+                  right: 10,
+                  child: Column(
+                    children: [
+                      FloatingActionButton(
+                        onPressed: _zoomIn,
+                        child: const Icon(Icons.zoom_in),
+                      ),
+                      const SizedBox(height: 10),
+                      FloatingActionButton(
+                        onPressed: _zoomOut,
+                        child: const Icon(Icons.zoom_out),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

@@ -104,35 +104,38 @@ class _SplashScreenPageState extends State<SplashScreenPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (!showThirdText) // Exibe o texto anterior até a terceira fase começar
-              Text(
-                displayedText,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            SizedBox(height: 20),
-            if (showThirdText)
-              FadeTransition(
-                opacity: _fadeAnimation,
-                child: Text(
-                  thirdText,
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (!showThirdText) // Exibe o texto anterior até a terceira fase começar
+                Text(
+                  displayedText,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 32,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
-          ],
+              SizedBox(height: 20),
+              if (showThirdText)
+                FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: Text(
+                    thirdText,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

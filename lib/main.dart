@@ -65,22 +65,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Crumb App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+    return PopScope(
+      canPop: false,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Crumb App',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        // Se o usuário estiver logado, redireciona para a página principal (App), caso contrário, para o login
+        home: SplashScreenPage(),
+        routes: {
+          '/login': (context) => LoginPage(), // Rota para LoginPage
+          '/register': (context) => RegisterPage(), // Rota para RegisterPage
+          '/app': (context) => App(), // Rota para home do app
+          '/onboarding': (context) =>
+              OnboardingPage(), // Rota para oboarding do app
+        },
       ),
-      // Se o usuário estiver logado, redireciona para a página principal (App), caso contrário, para o login
-      home: SplashScreenPage(),
-      routes: {
-        '/login': (context) => LoginPage(), // Rota para LoginPage
-        '/register': (context) => RegisterPage(), // Rota para RegisterPage
-        '/app': (context) => App(), // Rota para home do app
-        '/onboarding': (context) =>
-            OnboardingPage(), // Rota para oboarding do app
-      },
     );
   }
 }
