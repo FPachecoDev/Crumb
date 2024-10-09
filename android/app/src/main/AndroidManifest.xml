@@ -2,7 +2,7 @@
     <application
         android:label="Crumb"
         android:name="${applicationName}"
-        android:icon="@mipmap/crumb_icon">
+        android:icon="@mipmap/ic_launcher">
 
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyBJLEiaxZzw5-oX737xssyacoO5Vk1MM84"/>
          

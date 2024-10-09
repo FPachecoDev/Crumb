@@ -48,6 +48,7 @@ dependencies:
   firebase_storage: ^12.2.0
   image_cropper: ^8.0.1
   geocoding: ^3.0.0
+  flutter_launcher_icons: ^0.11.0
 
 dev_dependencies:
   flutter_test:
@@ -64,6 +65,11 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
+
+flutter_icons:
+  image_path: "icon/crumb_icon.png" 
+  android: true
+  ios: true
 flutter:
 
   # The following line ensures that the Material Icons font is
