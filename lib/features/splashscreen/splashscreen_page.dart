@@ -11,9 +11,9 @@ class SplashScreenPage extends StatefulWidget {
 
 class _SplashScreenPageState extends State<SplashScreenPage>
     with TickerProviderStateMixin {
-  String firstText = "Crie novas histórias";
-  String secondText = "Viva novas histórias";
-  String thirdText = "Crumb.";
+  String firstText = "Crumb";
+  String secondText = "Crie suas novas histórias.";
+  String thirdText = "Crie Crumbs.";
   String displayedText = "";
   int textIndex = 0;
   bool isSecondPhase = false;
