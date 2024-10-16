@@ -186,7 +186,7 @@ class _ProfilePageState extends State<ProfilePage>
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
                           child: GridView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
+                              scrollDirection: Axis.vertical,
                               shrinkWrap: true,
                               gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
