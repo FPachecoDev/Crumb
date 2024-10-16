@@ -100,8 +100,8 @@ class _GlobalPageState extends State<GlobalPage> {
             crumb.geopoint.longitude,
           ), // Use as coordenadas de cada crumb
           infoWindow: InfoWindow(
-            title: crumb.userId,
-            snippet: crumb.caption,
+            title: crumb.caption,
+            snippet: crumb.street,
           ),
         ),
       );
