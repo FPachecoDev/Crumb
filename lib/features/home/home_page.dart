@@ -110,10 +110,14 @@ class _HomePageState extends State<HomePage> {
     return PopScope(
       canPop: false,
       child: Scaffold(
+        backgroundColor: Colors.black,
         body: Consumer<HomePageController>(
           builder: (context, homeController, child) {
             if (homeController.isLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(
+                  child: CircularProgressIndicator(
+                color: Colors.white,
+              ));
             }
 
             if (homeController.crumbs.isEmpty) {
