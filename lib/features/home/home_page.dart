@@ -212,7 +212,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       ),
                                 Text(
-                                  "${crumb.city}, ${crumb.country}",
+                                  "${crumb.street}, ${crumb.city}",
                                   style: const TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold),
