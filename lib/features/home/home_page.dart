@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:crumb/features/home/models/crumbs_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -122,7 +124,11 @@ class _HomePageState extends State<HomePage> {
 
             if (homeController.crumbs.isEmpty) {
               return const Center(
-                  child: Text("Nenhum crumb encontrado nas proximidades"));
+                  child: Text(
+                "Nenhum crumb encontrado nas proximidades",
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ));
             }
 
             return PageView.builder(
@@ -175,8 +181,9 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                     Text(
                                       " $nickname",
-                                      style:
-                                          const TextStyle(color: Colors.white),
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                     const SizedBox(
                                         width:
@@ -184,22 +191,31 @@ class _HomePageState extends State<HomePage> {
                                     Text(
                                       _timeAgo(crumb
                                           .timestamp), // Exibindo o tempo calculado
-                                      style:
-                                          const TextStyle(color: Colors.white),
+                                      style: const TextStyle(
+                                          color: Colors.white, fontSize: 10),
                                     ),
                                   ],
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 10, bottom: 10),
-                                  child: Text(
-                                    crumb.caption,
-                                    style: const TextStyle(color: Colors.white),
-                                  ),
-                                ),
+                                crumb.caption == ''
+                                    // ignore: prefer_const_constructors
+                                    ? SizedBox(
+                                        height: 10,
+                                      )
+                                    : Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 10, bottom: 10),
+                                        child: Text(
+                                          crumb.caption,
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
                                 Text(
                                   "${crumb.city}, ${crumb.country}",
-                                  style: const TextStyle(color: Colors.white),
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
