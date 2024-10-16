@@ -63,105 +63,107 @@ class _LoginPageState extends State<LoginPage> {
             Center(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Título "Crumb"
-                    const Text(
-                      'Crumb.',
-                      style: TextStyle(
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const Text(
-                      'Criando novas historias.',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                    const SizedBox(height: 300),
-                    // Campo de email
-                    TextField(
-                      onChanged: (value) {
-                        loginController.email =
-                            value; // Atualiza o email no controlador
-                      },
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white.withOpacity(0.8),
-                        hintText: 'email@email.com',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Título "Crumb"
+                      const Text(
+                        'Crumb.',
+                        style: TextStyle(
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    // Campo de senha
-                    TextField(
-                      onChanged: (value) {
-                        loginController.password =
-                            value; // Atualiza a senha no controlador
-                      },
-                      obscureText: true, // Campo de password
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white.withOpacity(0.8),
-                        hintText: '********',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
+                      const Text(
+                        'Criando novas historias.',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontStyle: FontStyle.italic,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 24),
-                    // Exibe mensagem de erro se houver
-                    if (loginController.errorMessage != null)
-                      Text(
-                        loginController.errorMessage!,
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    const SizedBox(height: 16),
-                    // Botão "Entrar"
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Ação ao clicar no botão de login
-                          loginController.login(context);
+                      const SizedBox(height: 300),
+                      // Campo de email
+                      TextField(
+                        onChanged: (value) {
+                          loginController.email =
+                              value; // Atualiza o email no controlador
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black, // Fundo preto
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
-                        ),
-                        child: const Text(
-                          'Entrar',
-                          style: TextStyle(
-                            color: Colors.white, // Texto branco
-                            fontSize: 16,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white.withOpacity(0.8),
+                          hintText: 'email@email.com',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    // Texto "Cadastre-se usando email"
-                    InkWell(
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => RegisterPage(),
+                      const SizedBox(height: 16),
+                      // Campo de senha
+                      TextField(
+                        onChanged: (value) {
+                          loginController.password =
+                              value; // Atualiza a senha no controlador
+                        },
+                        obscureText: true, // Campo de password
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white.withOpacity(0.8),
+                          hintText: '********',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
                         ),
                       ),
-                      child: const Text(
-                        'Cadastre-se usando email',
-                        style: TextStyle(
-                          color: Colors.white,
-                          decoration: TextDecoration.underline,
+                      const SizedBox(height: 24),
+                      // Exibe mensagem de erro se houver
+                      if (loginController.errorMessage != null)
+                        Text(
+                          loginController.errorMessage!,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      const SizedBox(height: 16),
+                      // Botão "Entrar"
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            // Ação ao clicar no botão de login
+                            loginController.login(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.black, // Fundo preto
+                            padding: const EdgeInsets.symmetric(vertical: 16.0),
+                          ),
+                          child: const Text(
+                            'Entrar',
+                            style: TextStyle(
+                              color: Colors.white, // Texto branco
+                              fontSize: 16,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      // Texto "Cadastre-se usando email"
+                      InkWell(
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => RegisterPage(),
+                          ),
+                        ),
+                        child: const Text(
+                          'Cadastre-se usando email',
+                          style: TextStyle(
+                            color: Colors.white,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
