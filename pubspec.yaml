@@ -89,6 +89,7 @@ flutter:
   assets:
     - assets/images/icon/icon_remender_linha.png
     - assets/images/icon/icon_remender_full.png
+    - assets/images/icon/icon_pin.png
   
 
   # An image asset can refer to one or more resolution-specific "variants", see

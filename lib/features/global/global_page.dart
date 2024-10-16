@@ -82,13 +82,18 @@ class _GlobalPageState extends State<GlobalPage> {
     }
   }
 
-  void _addMarkers() {
+  Future<void> _addMarkers() async {
     final controller =
         context.read<GlobalController>(); // Usando read para não ouvir mudanças
     _markers.clear(); // Limpa os marcadores existentes
     for (GlobalCrumbModel crumb in controller.crumbs) {
       _markers.add(
         Marker(
+          icon: await BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(
+                devicePixelRatio: 2.0), // Define o tamanho do ícone como 5x5
+            'assets/images/icon/icon_pin.png',
+          ),
           markerId: MarkerId(crumb.id), // Certifique-se de que 'id' é único
           position: LatLng(
             crumb.geopoint.latitude,
