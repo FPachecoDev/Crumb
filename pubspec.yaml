@@ -49,6 +49,7 @@ dependencies:
   image_cropper: ^8.0.1
   geocoding: ^3.0.0
   flutter_launcher_icons: ^0.11.0
+  get: ^4.6.6
 
 flutter_icons:
   android: "launcher_icon"
