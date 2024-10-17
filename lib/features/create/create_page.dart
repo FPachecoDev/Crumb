@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:crumb/app.dart';
 import 'package:crumb/features/create/create_controller.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:camera/camera.dart';
 import 'package:provider/provider.dart';
@@ -145,11 +147,15 @@ class _CreatePageState extends State<CreatePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Stack(
         children: [
           _imageFile != null || _videoFile != null
               ? _buildPreview()
-              : _buildCameraView(),
+              : Padding(
+                  padding: const EdgeInsets.only(top: 100, left: 10, right: 10),
+                  child: Container(child: _buildCameraView()),
+                ),
           if (_isLoading)
             Container(
               color: Colors.black.withOpacity(0.5), // Fundo transparente
@@ -164,43 +170,65 @@ class _CreatePageState extends State<CreatePage> {
 
   Widget _buildCameraView() {
     return _controller == null || !_controller!.value.isInitialized
-        ? const Center(child: CircularProgressIndicator())
+        ? const Center(
+            child: CircularProgressIndicator(
+            backgroundColor: Colors.white,
+          ))
         : Stack(
             children: [
-              Container(
-                width: double.infinity,
-                height: double.infinity,
+              ClipRRect(
+                // ignore: prefer_const_constructors
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8.0),
+                  topRight: Radius.circular(8.0),
+                  bottomRight: Radius.circular(8.0),
+                  bottomLeft: Radius.circular(8.0),
+                ),
                 child: CameraPreview(_controller!),
               ),
               Positioned(
-                bottom: 50,
+                bottom: 15,
                 left: 20,
                 right: 20,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    IconButton(
-                      icon: const Icon(
-                        Icons.camera,
-                        color: Colors.white,
-                        size: 50,
+                    GestureDetector(
+                      onTap: _takePhoto,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          color: Colors.white,
+                          border: Border.all(
+                              color: Colors.grey, // Set border color
+                              width: 2),
+                        ),
+                        height: 55,
+                        width: 55,
                       ),
-                      onPressed: _takePhoto,
                     ),
-                    IconButton(
-                      icon: Icon(
-                        _isRecording ? Icons.stop : Icons.videocam,
-                        color: _isRecording ? Colors.red : Colors.white,
-                        size: 50,
-                      ),
-                      onPressed: _recordVideo,
-                    ),
+                    // IconButton(
+                    //  icon: const Icon(
+                    //    Icons.camera,
+                    //   color: Colors.white,
+                    //   size: 60,
+                    //  ),
+                    //  onPressed: _takePhoto,
+                    // ),
+                    //  IconButton(
+                    //  icon: Icon(
+                    //    _isRecording ? Icons.stop : Icons.videocam,
+                    //    color: _isRecording ? Colors.red : Colors.white,
+                    //    size: 50,
+                    //   ),
+                    //    onPressed: _recordVideo,
+                    //  ),
                   ],
                 ),
               ),
               Positioned(
-                top: 55,
-                left: 20,
+                top: 10,
+                left: 10,
                 child: IconButton(
                   icon: const Icon(
                     Icons.close,
@@ -216,8 +244,8 @@ class _CreatePageState extends State<CreatePage> {
                 ),
               ),
               Positioned(
-                top: 55,
-                right: 20,
+                top: 10,
+                right: 10,
                 child: IconButton(
                   icon: const Icon(
                     Icons.switch_camera,
