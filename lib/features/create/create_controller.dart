@@ -1,104 +1,141 @@
 import 'dart:io';
-import 'package:camera/camera.dart';
+import 'package:camera/camera.dart'; // Importa a biblioteca da câmera
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:geocoding/geocoding.dart';
+import 'package:image/image.dart' as img; // Para manipulação de imagem
+import 'package:geocoding/geocoding.dart'; // Para geocodificação
 
-class CreatePageController extends GetxController {
+class CreatePageController extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
-  RxBool isLoading = false.obs;
+  bool isLoading = false;
   String? errorMessage;
-  CameraController? cameraController;
-  Rx<File?> imageFile = Rx<File?>(null);
-  Rx<File?> videoFile = Rx<File?>(null);
-  int selectedCameraIndex = 0;
-  TextEditingController captionController = TextEditingController();
 
+  CameraController? _cameraController;
+  List<CameraDescription>? cameras;
+  int selectedCameraIndex = 1; // 0 para traseira, 1 para frontal
+
+  // Inicializa a câmera
   Future<void> initializeCamera() async {
-    try {
-      final cameras = await availableCameras();
-      selectedCameraIndex = 0;
-      cameraController =
-          CameraController(cameras[selectedCameraIndex], ResolutionPreset.high);
-      await cameraController!.initialize();
-      update();
-    } catch (e) {
-      errorMessage = 'Erro ao inicializar a câmera: $e';
-      update();
+    // Obtém a lista de câmeras disponíveis
+    cameras = await availableCameras();
+
+    // Inicializa a câmera com a frontal (índice 1 geralmente é a frontal)
+    if (cameras!.isNotEmpty) {
+      _cameraController = CameraController(
+          cameras![selectedCameraIndex], ResolutionPreset.high);
+      await _cameraController!.initialize();
+      notifyListeners();
     }
   }
 
-  Future<void> takePhoto() async {
-    if (cameraController != null && cameraController!.value.isInitialized) {
-      final image = await cameraController!.takePicture();
-      imageFile.value = File(image.path);
-    }
+  // Alternar entre a câmera frontal e traseira
+  Future<void> switchCamera() async {
+    if (cameras == null || cameras!.isEmpty) return;
+
+    selectedCameraIndex =
+        selectedCameraIndex == 0 ? 1 : 0; // Alterna entre 0 e 1
+
+    // Inicializa a nova câmera selecionada
+    _cameraController =
+        CameraController(cameras![selectedCameraIndex], ResolutionPreset.high);
+    await _cameraController!.initialize();
+    notifyListeners();
   }
 
-  Future<void> toggleCamera() async {
-    selectedCameraIndex = selectedCameraIndex == 0 ? 1 : 0;
-    await initializeCamera();
+  // Descartar o controller
+  void disposeCamera() {
+    _cameraController?.dispose(); // Libera o controller da câmera
+    _cameraController = null; // Define como nulo
   }
 
-  Future<void> confirmSelection() async {
-    isLoading.value = true;
+  Future<void> saveMedia(File mediaFile, {required String caption}) async {
+    isLoading = true;
+    notifyListeners();
+
     try {
+      // Verifica se o usuário está autenticado
       User? user = _auth.currentUser;
       if (user == null) {
         errorMessage = 'Usuário não autenticado';
-        isLoading.value = false;
+        isLoading = false;
+        notifyListeners();
         return;
       }
 
-      // Obtém localização e salva mídia no Firestore
+      // Obtém a localização atual do usuário
       Position position = await _getCurrentLocation();
       List<Placemark> placemarks =
           await placemarkFromCoordinates(position.latitude, position.longitude);
-      String mediaUrl = await _uploadMedia(imageFile.value!);
+      Placemark place = placemarks[0];
 
+      // Cria um mapa para os dados do crumb, incluindo a legenda
       Map<String, dynamic> crumbData = {
         'userId': user.uid,
-        'mediaUrl': mediaUrl,
-        'caption': captionController.text,
+        'mediaUrl': await _uploadMedia(mediaFile), // Salva o URL do arquivo
+        'caption': caption, // Adiciona o campo de legenda (caption)
         "geopoint": GeoPoint(position.latitude, position.longitude),
+        'street': place.street,
+        'neighborhood': place.subLocality,
+        'city': place.locality,
+        'country': place.country,
+        'postalCode': place.postalCode,
         'timestamp': FieldValue.serverTimestamp(),
       };
 
+      // Salva o crumb no Firestore
       await _firestore.collection('crumbs').add(crumbData);
-      imageFile.value = null;
-      videoFile.value = null;
-      captionController.clear();
-      isLoading.value = false;
-    } catch (e) {
-      errorMessage = 'Erro ao salvar mídia: $e';
-      isLoading.value = false;
+
+      isLoading = false;
+      notifyListeners();
+    } catch (error) {
+      errorMessage = 'Ocorreu um erro: $error';
+      isLoading = false;
+      notifyListeners();
     }
   }
 
   Future<Position> _getCurrentLocation() async {
-    return await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Verifica se o serviço de localização está habilitado
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      throw Exception('Os serviços de localização estão desativados.');
+    }
+
+    // Verifica a permissão de localização
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        throw Exception('Permissão de localização negada.');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      throw Exception('Permissão de localização negada permanentemente.');
+    }
+
+    // Retorna a posição atual do usuário
+    return await Geolocator.getCurrentPosition();
   }
 
-  Future<String> _uploadMedia(File file) async {
-    // Lógica para salvar no Firebase Storage e retornar a URL do arquivo.
-    // Exemplo:
-    String fileName = 'media/${DateTime.now()}.png';
-    await _storage.ref(fileName).putFile(file);
-    return await _storage.ref(fileName).getDownloadURL();
-  }
+  Future<String> _uploadMedia(File mediaFile) async {
+    String filePath =
+        'crumbs/${DateTime.now().millisecondsSinceEpoch}_${mediaFile.uri.pathSegments.last}';
+    final storageRef = _storage.ref().child(filePath);
 
-  void retake() {
-    imageFile.value = null;
-    videoFile.value = null;
-    captionController.clear();
-    initializeCamera();
+    // Faz o upload do arquivo para o Firebase Storage
+    await storageRef.putFile(mediaFile);
+    String downloadUrl = await storageRef.getDownloadURL();
+
+    return downloadUrl; // Retorna a URL do arquivo salvo
   }
 }
