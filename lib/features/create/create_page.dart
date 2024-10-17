@@ -159,9 +159,9 @@ class _CreatePageState extends State<CreatePage> {
                     child: Container(child: _buildCameraView()),
                   ),
             if (_isLoading)
-              Container(
-                color: Colors.black.withOpacity(0.5), // Fundo transparente
-                child: const Center(
+              Center(
+                child: Container(
+                  color: Colors.black.withOpacity(0.5), // Fundo transparente
                   child: CircularProgressIndicator(),
                 ),
               ),
