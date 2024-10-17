@@ -260,50 +260,70 @@ class _CreatePageState extends State<CreatePage> {
   }
 
   Widget _buildPreview() {
-    return Stack(
+    return Column(
       children: [
-        if (_imageFile != null)
-          Image.file(
-            _imageFile!,
-            width: double.infinity,
-            height: double.infinity,
-            fit: BoxFit.cover,
-          )
-        else if (_videoFile != null)
-          Center(
-            child: Text("Vídeo gravado: ${_videoFile!.path}"),
-          ),
-        Positioned(
-          bottom: 100, // Move para dar espaço ao campo de legenda
-          left: 20,
-          right: 20,
+        Stack(
+          children: [
+            if (_imageFile != null)
+              Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10, top: 51),
+                child: ClipRRect(
+                  // ignore: prefer_const_constructors
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(8.0),
+                    topRight: Radius.circular(8.0),
+                    bottomRight: Radius.circular(8.0),
+                    bottomLeft: Radius.circular(8.0),
+                  ),
+                  child: Image.file(
+                    _imageFile!,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              )
+            else if (_videoFile != null)
+              Center(
+                child: Text("Vídeo gravado: ${_videoFile!.path}"),
+              ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.all(10),
           child: TextField(
             controller: _captionController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               hintText: 'Escreva uma legenda...',
-              border: OutlineInputBorder(),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
               fillColor: Colors.white,
               filled: true,
             ),
           ),
         ),
-        Positioned(
-          bottom: 50,
-          left: 20,
-          right: 20,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                onPressed: _confirmSelection,
-                child: const Text('Aceitar'),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            InkWell(
+              onTap: _confirmSelection,
+              // ignore: prefer_const_constructors
+              child: Icon(
+                Icons.check_circle_rounded,
+                color: Colors.white,
+                size: 30,
               ),
-              ElevatedButton(
-                onPressed: _retake,
-                child: const Text('Refazer'),
+            ),
+            InkWell(
+              onTap: _retake,
+              // ignore: prefer_const_constructors
+              child: Icon(
+                Icons.cancel,
+                color: Colors.white,
+                size: 30,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ],
     );
