@@ -148,22 +148,25 @@ class _CreatePageState extends State<CreatePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          _imageFile != null || _videoFile != null
-              ? _buildPreview()
-              : Padding(
-                  padding: const EdgeInsets.only(top: 51, left: 10, right: 10),
-                  child: Container(child: _buildCameraView()),
+      body: SingleChildScrollView(
+        child: Stack(
+          children: [
+            _imageFile != null || _videoFile != null
+                ? _buildPreview()
+                : Padding(
+                    padding:
+                        const EdgeInsets.only(top: 51, left: 10, right: 10),
+                    child: Container(child: _buildCameraView()),
+                  ),
+            if (_isLoading)
+              Container(
+                color: Colors.black.withOpacity(0.5), // Fundo transparente
+                child: const Center(
+                  child: CircularProgressIndicator(),
                 ),
-          if (_isLoading)
-            Container(
-              color: Colors.black.withOpacity(0.5), // Fundo transparente
-              child: const Center(
-                child: CircularProgressIndicator(),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
