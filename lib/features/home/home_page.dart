@@ -158,12 +158,29 @@ class _HomePageState extends State<HomePage> {
                     return Stack(
                       children: [
                         // Imagem de fundo
-                        Image.network(
-                          crumb.mediaUrl,
+                        FadeInImage(
+                          placeholder: AssetImage(
+                              'assets/loading.gif'), // Pode ser uma imagem de loading ou um CircularProgressIndicator
+                          image: NetworkImage(crumb.mediaUrl),
                           fit: BoxFit.cover,
                           height: double.infinity,
                           width: double.infinity,
+                          imageErrorBuilder: (context, error, stackTrace) {
+                            return Center(
+                              child: Icon(Icons
+                                  .error), // Exibe um ícone de erro caso haja problemas no carregamento
+                            );
+                          },
+                          placeholderErrorBuilder:
+                              (context, error, stackTrace) {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ), // Carregando enquanto a imagem não carrega
+                            );
+                          },
                         ),
+
                         Positioned(
                           bottom: 60,
                           child: Padding(
