@@ -153,7 +153,7 @@ class _CreatePageState extends State<CreatePage> {
           _imageFile != null || _videoFile != null
               ? _buildPreview()
               : Padding(
-                  padding: const EdgeInsets.only(top: 100, left: 10, right: 10),
+                  padding: const EdgeInsets.only(top: 51, left: 10, right: 10),
                   child: Container(child: _buildCameraView()),
                 ),
           if (_isLoading)
@@ -172,7 +172,7 @@ class _CreatePageState extends State<CreatePage> {
     return _controller == null || !_controller!.value.isInitialized
         ? const Center(
             child: CircularProgressIndicator(
-            backgroundColor: Colors.white,
+            color: Colors.white,
           ))
         : Stack(
             children: [
@@ -203,8 +203,8 @@ class _CreatePageState extends State<CreatePage> {
                               color: Colors.grey, // Set border color
                               width: 2),
                         ),
-                        height: 55,
-                        width: 55,
+                        height: 70,
+                        width: 70,
                       ),
                     ),
                     // IconButton(
