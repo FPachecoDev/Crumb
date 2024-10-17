@@ -148,25 +148,22 @@ class _CreatePageState extends State<CreatePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            _imageFile != null || _videoFile != null
-                ? _buildPreview()
-                : Padding(
-                    padding:
-                        const EdgeInsets.only(top: 51, left: 10, right: 10),
-                    child: Container(child: _buildCameraView()),
-                  ),
-            if (_isLoading)
-              Center(
-                child: Container(
-                  color: Colors.black.withOpacity(0.5), // Fundo transparente
-                  child: CircularProgressIndicator(),
+      body: Stack(
+        children: [
+          _imageFile != null || _videoFile != null
+              ? _buildPreview()
+              : Padding(
+                  padding: const EdgeInsets.only(top: 51, left: 10, right: 10),
+                  child: Container(child: _buildCameraView()),
                 ),
+          if (_isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.5), // Fundo transparente
+              child: const Center(
+                child: CircularProgressIndicator(),
               ),
-          ],
-        ),
+            ),
+        ],
       ),
     );
   }
@@ -263,72 +260,74 @@ class _CreatePageState extends State<CreatePage> {
   }
 
   Widget _buildPreview() {
-    return Column(
-      children: [
-        Stack(
-          children: [
-            if (_imageFile != null)
-              Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10, top: 51),
-                child: ClipRRect(
-                  // ignore: prefer_const_constructors
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(8.0),
-                    topRight: Radius.circular(8.0),
-                    bottomRight: Radius.circular(8.0),
-                    bottomLeft: Radius.circular(8.0),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              if (_imageFile != null)
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10, top: 51),
+                  child: ClipRRect(
+                    // ignore: prefer_const_constructors
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(8.0),
+                      topRight: Radius.circular(8.0),
+                      bottomRight: Radius.circular(8.0),
+                      bottomLeft: Radius.circular(8.0),
+                    ),
+                    child: Image.file(
+                      _imageFile!,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                  child: Image.file(
-                    _imageFile!,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
+                )
+              else if (_videoFile != null)
+                Center(
+                  child: Text("Vídeo gravado: ${_videoFile!.path}"),
                 ),
-              )
-            else if (_videoFile != null)
-              Center(
-                child: Text("Vídeo gravado: ${_videoFile!.path}"),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: TextField(
+              controller: _captionController,
+              decoration: InputDecoration(
+                hintText: 'Escreva uma legenda...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                fillColor: Colors.white,
+                filled: true,
               ),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.all(10),
-          child: TextField(
-            controller: _captionController,
-            decoration: InputDecoration(
-              hintText: 'Escreva uma legenda...',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              fillColor: Colors.white,
-              filled: true,
             ),
           ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            InkWell(
-              onTap: _confirmSelection,
-              // ignore: prefer_const_constructors
-              child: Icon(
-                Icons.check_circle_rounded,
-                color: Colors.white,
-                size: 30,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              InkWell(
+                onTap: _confirmSelection,
+                // ignore: prefer_const_constructors
+                child: Icon(
+                  Icons.check_circle_rounded,
+                  color: Colors.white,
+                  size: 30,
+                ),
               ),
-            ),
-            InkWell(
-              onTap: _retake,
-              // ignore: prefer_const_constructors
-              child: Icon(
-                Icons.cancel,
-                color: Colors.white,
-                size: 30,
+              InkWell(
+                onTap: _retake,
+                // ignore: prefer_const_constructors
+                child: Icon(
+                  Icons.cancel,
+                  color: Colors.white,
+                  size: 30,
+                ),
               ),
-            ),
-          ],
-        ),
-      ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
