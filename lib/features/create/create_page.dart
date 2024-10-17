@@ -160,7 +160,9 @@ class _CreatePageState extends State<CreatePage> {
             Container(
               color: Colors.black.withOpacity(0.5), // Fundo transparente
               child: const Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
               ),
             ),
         ],
