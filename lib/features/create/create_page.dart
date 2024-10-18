@@ -181,7 +181,7 @@ class _CreatePageState extends State<CreatePage> {
                   alignment: Alignment.center,
                   // Inverte a câmera frontal para corrigir o espelhamento
                   transform: _selectedCameraIndex == 1
-                      ? Matrix4.rotationX(math.pi)
+                      ? Matrix4.identity()
                       : Matrix4.identity(),
                   child: CameraPreview(_controller!),
                 ),
