@@ -1,9 +1,9 @@
 import 'dart:io';
+import 'dart:math' as math;
 import 'package:crumb/app.dart';
 import 'package:crumb/features/create/create_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:camera/camera.dart';
 import 'package:provider/provider.dart';
@@ -20,11 +20,10 @@ class _CreatePageState extends State<CreatePage> {
   CameraController? _controller;
   Future<void>? _initializeControllerFuture;
   bool _isRecording = false;
-  bool _isLoading = false; // Estado de loading
+  bool _isLoading = false;
   List<CameraDescription>? _cameras;
   int _selectedCameraIndex = 0;
-  TextEditingController _captionController =
-      TextEditingController(); // Controlador para a legenda
+  TextEditingController _captionController = TextEditingController();
 
   @override
   void initState() {
@@ -44,7 +43,7 @@ class _CreatePageState extends State<CreatePage> {
       ResolutionPreset.high,
     );
     _initializeControllerFuture = _controller!.initialize().then((_) {
-      setState(() {}); // Atualiza a UI assim que a câmera for inicializada
+      setState(() {});
     }).catchError((error) {
       print('Erro na inicialização da câmera: $error');
     });
@@ -83,7 +82,7 @@ class _CreatePageState extends State<CreatePage> {
 
   Future<void> _confirmSelection() async {
     setState(() {
-      _isLoading = true; // Exibe o loading ao iniciar
+      _isLoading = true;
     });
 
     final controller =
@@ -96,7 +95,7 @@ class _CreatePageState extends State<CreatePage> {
     }
 
     setState(() {
-      _isLoading = false; // Remove o loading após a publicação
+      _isLoading = false;
     });
 
     if (controller.errorMessage != null) {
@@ -107,8 +106,6 @@ class _CreatePageState extends State<CreatePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Foto/Vídeo salvo com sucesso!")),
       );
-
-      // Redireciona para a página principal após o sucesso
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => App()),
@@ -118,7 +115,7 @@ class _CreatePageState extends State<CreatePage> {
     setState(() {
       _imageFile = null;
       _videoFile = null;
-      _captionController.clear(); // Limpa o campo de legenda
+      _captionController.clear();
     });
     _initializeCamera();
   }
@@ -127,7 +124,7 @@ class _CreatePageState extends State<CreatePage> {
     setState(() {
       _imageFile = null;
       _videoFile = null;
-      _captionController.clear(); // Limpa o campo de legenda
+      _captionController.clear();
     });
     _initializeCamera();
   }
@@ -140,7 +137,7 @@ class _CreatePageState extends State<CreatePage> {
   @override
   void dispose() {
     _controller?.dispose();
-    _captionController.dispose(); // Dispose do controlador de legenda
+    _captionController.dispose();
     super.dispose();
   }
 
@@ -158,7 +155,7 @@ class _CreatePageState extends State<CreatePage> {
                 ),
           if (_isLoading)
             Container(
-              color: Colors.black.withOpacity(0.5), // Fundo transparente
+              color: Colors.black.withOpacity(0.5),
               child: const Center(
                 child: CircularProgressIndicator(
                   color: Colors.white,
@@ -179,14 +176,15 @@ class _CreatePageState extends State<CreatePage> {
         : Stack(
             children: [
               ClipRRect(
-                // ignore: prefer_const_constructors
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(8.0),
-                  topRight: Radius.circular(8.0),
-                  bottomRight: Radius.circular(8.0),
-                  bottomLeft: Radius.circular(8.0),
+                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                child: Transform(
+                  alignment: Alignment.center,
+                  // Inverte a câmera frontal para corrigir o espelhamento
+                  transform: _selectedCameraIndex == 1
+                      ? Matrix4.rotationY(math.pi)
+                      : Matrix4.identity(),
+                  child: CameraPreview(_controller!),
                 ),
-                child: CameraPreview(_controller!),
               ),
               Positioned(
                 bottom: 15,
@@ -201,31 +199,12 @@ class _CreatePageState extends State<CreatePage> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(100),
                           color: Colors.white,
-                          border: Border.all(
-                              color: Colors.grey, // Set border color
-                              width: 2),
+                          border: Border.all(color: Colors.grey, width: 2),
                         ),
                         height: 70,
                         width: 70,
                       ),
                     ),
-
-                    // IconButton(
-                    //  icon: const Icon(
-                    //    Icons.camera,
-                    //   color: Colors.white,
-                    //   size: 60,
-                    //  ),
-                    //  onPressed: _takePhoto,
-                    // ),
-                    //  IconButton(
-                    //  icon: Icon(
-                    //    _isRecording ? Icons.stop : Icons.videocam,
-                    //    color: _isRecording ? Colors.red : Colors.white,
-                    //    size: 50,
-                    //   ),
-                    //    onPressed: _recordVideo,
-                    //  ),
                   ],
                 ),
               ),
@@ -272,13 +251,7 @@ class _CreatePageState extends State<CreatePage> {
                 Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10, top: 51),
                   child: ClipRRect(
-                    // ignore: prefer_const_constructors
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(8.0),
-                      topRight: Radius.circular(8.0),
-                      bottomRight: Radius.circular(8.0),
-                      bottomLeft: Radius.circular(8.0),
-                    ),
+                    borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                     child: Image.file(
                       _imageFile!,
                       width: double.infinity,
@@ -311,8 +284,7 @@ class _CreatePageState extends State<CreatePage> {
             children: [
               InkWell(
                 onTap: _confirmSelection,
-                // ignore: prefer_const_constructors
-                child: Icon(
+                child: const Icon(
                   Icons.check_circle_rounded,
                   color: Colors.white,
                   size: 30,
@@ -320,8 +292,7 @@ class _CreatePageState extends State<CreatePage> {
               ),
               InkWell(
                 onTap: _retake,
-                // ignore: prefer_const_constructors
-                child: Icon(
+                child: const Icon(
                   Icons.cancel,
                   color: Colors.white,
                   size: 30,
