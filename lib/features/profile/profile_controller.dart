@@ -41,6 +41,10 @@ class ProfileController extends ChangeNotifier {
     // Adiciona os URLs das imagens ao modelo de usuário
     user?.photos =
         crumbsSnapshot.docs.map((doc) => doc['mediaUrl'] as String).toList();
+
+    // Adiciona os URLs das imagens ao modelo de usuário
+    user?.street =
+        crumbsSnapshot.docs.map((doc) => doc['street'] as String).toList();
   }
 
   // Método que deve ser chamado ao descartar o controller

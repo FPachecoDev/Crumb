@@ -197,15 +197,45 @@ class _ProfilePageState extends State<ProfilePage>
                               ),
                               itemCount: controller.user!.photos.length,
                               itemBuilder: (context, index) {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                          controller.user!.photos[index]),
-                                      fit: BoxFit.cover,
+                                return Stack(
+                                  children: [
+                                    // Imagem de fundo com opacidade
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        image: DecorationImage(
+                                          image: NetworkImage(
+                                              controller.user!.photos[index]),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    // Camada de opacidade escura
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Colors.black.withOpacity(
+                                            0.9), // Cor preta com 50% de opacidade
+                                      ),
+                                    ),
+                                    // Texto sobre a imagem
+                                    // ignore: prefer_const_constructors
+                                    Positioned(
+                                      bottom: 10, // Posição do texto
+                                      left: 10, // Alinhamento do texto
+                                      // ignore: prefer_const_constructors
+                                      child: Text(
+                                        controller.user!.street[index],
+                                        // ignore: prefer_const_constructors
+                                        style: TextStyle(
+                                          color: Colors.white, // Cor do texto
+                                          fontSize: 8, // Tamanho da fonte
+                                          fontWeight:
+                                              FontWeight.bold, // Negrito
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 );
                               }),
                         );

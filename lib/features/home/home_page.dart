@@ -159,6 +159,7 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         // Imagem de fundo
                         FadeInImage(
+                          // ignore: prefer_const_constructors
                           placeholder: AssetImage(
                               'assets/loading.gif'), // Pode ser uma imagem de loading ou um CircularProgressIndicator
                           image: NetworkImage(crumb.mediaUrl),
@@ -166,14 +167,18 @@ class _HomePageState extends State<HomePage> {
                           height: double.infinity,
                           width: double.infinity,
                           imageErrorBuilder: (context, error, stackTrace) {
+                            // ignore: prefer_const_constructors
                             return Center(
+                              // ignore: prefer_const_constructors
                               child: Icon(Icons
                                   .error), // Exibe um ícone de erro caso haja problemas no carregamento
                             );
                           },
                           placeholderErrorBuilder:
                               (context, error, stackTrace) {
+                            // ignore: prefer_const_constructors
                             return Center(
+                              // ignore: prefer_const_constructors
                               child: CircularProgressIndicator(
                                 color: Colors.white,
                               ), // Carregando enquanto a imagem não carrega
