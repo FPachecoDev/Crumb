@@ -1,87 +1,62 @@
-import 'package:crumb/features/auth/login/login_controller.dart';
-import 'package:crumb/features/auth/login/login_page.dart';
-import 'package:crumb/features/auth/register/register_controller.dart';
-import 'package:crumb/features/auth/register/register_page.dart';
-import 'package:crumb/features/auth/repository/user_repository.dart';
-import 'package:crumb/features/create/create_controller.dart';
-import 'package:crumb/features/global/global_controller.dart';
-import 'package:crumb/features/home/home_controller.dart';
-import 'package:crumb/features/home/home_page.dart';
-import 'package:crumb/features/onboarding/onboarding_controller.dart';
-import 'package:crumb/features/onboarding/onboarding_page.dart';
-import 'package:crumb/features/profile/profile_controller.dart';
-import 'package:crumb/features/splashscreen/splashscreen_page.dart';
+import 'package:crumb/firebase_options.dart';
+import 'package:crumb/modules/auth/domain/usecases/logout_usecase.dart';
+import 'package:crumb/modules/auth/domain/usecases/register_usecase.dart';
+import 'package:crumb/modules/auth/presentation/bloc/auth_event.dart';
+import 'package:crumb/modules/home/domain/usecases/get_nearby_crumbs_usecase.dart';
+import 'package:crumb/modules/home/presentation/bloc/home_bloc.dart';
+import 'package:crumb/modules/location/domain/usecases/get_current_location_usecase.dart';
+import 'package:crumb/modules/splashscreen/presentation/bloc/splash_bloc.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Import para usar SharedPreferences
-import 'firebase_options.dart';
-
-import 'app.dart'; // Importação do arquivo do aplicativo principal
+import 'package:crumb/injection_container.dart' as di;
+import 'modules/auth/presentation/bloc/auth_bloc.dart';
+import 'modules/auth/domain/usecases/login_usecase.dart';
+import 'modules/auth/presentation/pages/login_page.dart';
+import 'modules/auth/presentation/pages/register_page.dart';
+import 'modules/splashscreen/presentation/pages/splash_screen_page.dart';
+import 'modules/home/presentation/pages/home_screen_page.dart';
 
 void main() async {
-  WidgetsFlutterBinding
-      .ensureInitialized(); // Garante que o Firebase seja inicializado corretamente
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-            create: (_) => RegisterController(
-                UserRepository())), // Injeção do UserRepository no RegisterController
-        ChangeNotifierProvider(
-            create: (_) =>
-                LoginController()), // Injeção do AuthRepository no RegisterController
-
-        ChangeNotifierProvider(
-            create: (_) =>
-                CreatePageController()), // Injeção do AuthRepository no RegisterController
-
-        ChangeNotifierProvider(
-            create: (_) =>
-                HomePageController()), // Injeção do HomeController no RegisterController
-
-        ChangeNotifierProvider(
-            create: (_) =>
-                ProfileController()), // Injeção do HomeController no RegisterControlle
-
-        ChangeNotifierProvider(create: (_) => GlobalController()),
-
-        ChangeNotifierProvider(
-            create: (_) =>
-                ProfileController()), // Injeção do HomeController no RegisterControlle
-      ],
-      child: MyApp(), // Passa o estado de login para o MyApp
-    ),
-  );
+  di.init(); // Inicializa o GetIt com os módulos necessários
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  // Construtor que aceita o estado de login
-  MyApp();
-
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Crumb App',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
+    return MultiProvider(
+      providers: [
+        Provider<AuthBloc>(
+          create: (_) => AuthBloc(
+            loginUseCase: di.sl<LoginUseCase>(),
+            registerUseCase: di.sl<RegisterUseCase>(),
+            logoutUseCase: di.sl<LogoutUseCase>(),
+          ),
         ),
-        // Se o usuário estiver logado, redireciona para a página principal (App), caso contrário, para o login
+        Provider<HomeBloc>(
+          create: (_) => HomeBloc(
+            getCurrentLocation: di.sl<GetCurrentLocation>(),
+            getNearbyCrumbs: di.sl<GetNearbyCrumbsUsecase>(),
+          ),
+        ),
+        Provider<SplashBloc>(
+          create: (_) => SplashBloc(),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'My App',
+        theme: ThemeData(primarySwatch: Colors.blue),
         home: SplashScreenPage(),
         routes: {
-          '/login': (context) => LoginPage(), // Rota para LoginPage
-          '/register': (context) => RegisterPage(), // Rota para RegisterPage
-          '/app': (context) => App(), // Rota para home do app
-          '/onboarding': (context) =>
-              OnboardingPage(), // Rota para oboarding do app
+          '/home': (context) => HomeScreenPage(),
+          '/login': (context) => LoginPage(),
+          '/register': (context) => RegisterPage(),
         },
       ),
     );
