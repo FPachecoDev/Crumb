@@ -4,27 +4,28 @@ import 'package:crumb/modules/home/domain/entities/crumb_entity.dart';
 class CrumbModel extends CrumbEntity {
   CrumbModel({
     required String id,
-    required String title,
-    required String description,
+    required String street,
+    required String caption,
     required double latitude,
     required double longitude,
+    required String userName,
   }) : super(
-          id: id,
-          title: title,
-          description: description,
-          latitude: latitude,
-          longitude: longitude,
-        );
+            id: id,
+            street: street,
+            caption: caption,
+            latitude: latitude,
+            longitude: longitude,
+            userName: userName);
 
   // Método para converter dados do Firestore para CrumbModel
   factory CrumbModel.fromFirestore(String id, Map<String, dynamic> data) {
     final GeoPoint geoPoint = data['geopoint'];
     return CrumbModel(
-      id: id,
-      title: data['title'] ?? '',
-      description: data['description'] ?? '',
-      latitude: geoPoint.latitude,
-      longitude: geoPoint.longitude,
-    );
+        id: id,
+        street: data['street'] ?? '',
+        caption: data['caption'] ?? '',
+        latitude: geoPoint.latitude,
+        longitude: geoPoint.longitude,
+        userName: data['userName']);
   }
 }

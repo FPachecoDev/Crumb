@@ -28,7 +28,23 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
 
       // Apenas adiciona os crumbs próximos, dentro do raio de 1 km
       if (distance <= 1000) {
-        nearbyCrumbs.add(CrumbModel.fromFirestore(doc.id, data));
+        // Busca o ID do usuário que publicou este crumb
+        final String userId = data['userId'];
+        final userSnapshot =
+            await firestore.collection('users').doc(userId).get();
+
+        // Verifica se os dados do usuário existem e obtém o nome
+        final String userName = userSnapshot.exists
+            ? (userSnapshot.data()?['name'] ?? 'Desconhecido')
+            : 'Desconhecido';
+
+        // Cria o CrumbModel com o nome do usuário
+        final crumb = CrumbModel.fromFirestore(doc.id, {
+          ...data,
+          'userName':
+              userName, // Adiciona o nome do usuário ao mapa de dados do crumb
+        });
+        nearbyCrumbs.add(crumb);
       }
     }
 

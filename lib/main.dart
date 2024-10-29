@@ -53,6 +53,7 @@ class MyApp extends StatelessWidget {
         title: 'My App',
         theme: ThemeData(primarySwatch: Colors.blue),
         home: SplashScreenPage(),
+        debugShowCheckedModeBanner: false,
         routes: {
           '/home': (context) => HomeScreenPage(),
           '/login': (context) => LoginPage(),

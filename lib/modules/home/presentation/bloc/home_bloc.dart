@@ -38,7 +38,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(HomeLoading());
 
     try {
-      // Use valores padrão ou obtenha os valores adequados para os parâmetros obrigatórios
+      // Use a posição atual do usuário fornecida pelo evento
       final userPosition = Position(
         latitude: event.latitude,
         longitude: event.longitude,
